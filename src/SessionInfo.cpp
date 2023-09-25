@@ -17,9 +17,10 @@ namespace eipScanner {
 	using eip::EncapsPacketFactory;
 	using eip::EncapsStatusCodes;
 
-	SessionInfo::SessionInfo(const std::string &host, int port, const std::chrono::milliseconds &timeout)
+	SessionInfo::SessionInfo(const std::string &host, int port, const std::chrono::milliseconds &timeout, const std::string &client)
 			: _socket{sockets::EndPoint(host, port), timeout}
-			, _sessionHandle{0} {
+			, _sessionHandle{0}
+		  , _client(client) {
 		_socket.setRecvTimeout(timeout);
 
 		EncapsPacket packet = EncapsPacketFactory().createRegisterSessionPacket();
@@ -34,8 +35,12 @@ namespace eipScanner {
 		Logger(LogLevel::INFO) << "Registered session " << _sessionHandle;
 	}
 
+	SessionInfo::SessionInfo(const std::string &host, int port, const std::chrono::milliseconds& timeout)
+		  : SessionInfo(host, port, timeout, "") {
+	}
+
 	SessionInfo::SessionInfo(const std::string &host, int port)
-			: SessionInfo(host, port, std::chrono::milliseconds(1000)) {
+			: SessionInfo(host, port, std::chrono::milliseconds(1000), "") {
 	}
 
 	SessionInfo::~SessionInfo() {
@@ -64,7 +69,6 @@ namespace eipScanner {
 			throw std::runtime_error("Wrong session handle received");
 		}
 
-
 		return recvPacket;
 	}
 
@@ -74,6 +78,10 @@ namespace eipScanner {
 
 	sockets::EndPoint SessionInfo::getRemoteEndPoint() const {
 		return _socket.getRemoteEndPoint();
+	}
+
+	std::string SessionInfo::getClient() const {
+		return _client;
 	}
 
 }

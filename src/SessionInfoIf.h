@@ -37,6 +37,12 @@ namespace eipScanner {
 		 * @return
 		 */
 		virtual sockets::EndPoint getRemoteEndPoint() const = 0;
+
+		/**
+		 * Gets the address of the client to which the session should bind.
+		 * @return the IP address of the client as a string.
+		 */
+		virtual std::string getClient() const = 0;
 	};
 }
 #endif //EIPSCANNER_SESSIONINFOIF_H
