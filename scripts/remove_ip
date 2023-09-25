@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root. Try sudo."
+  exit 1
+fi
+
+if [[ $# -ne 4 ]]; then
+  echo "Usage: $0 NET_IFACE BASE_IP FIRST_ADDRESS LAST_ADDRESS"
+  echo "Example: $0 enp5s0 10.140.131.0 1 3"
+  exit 2
+fi
+
+dev="$1"
+base_ip="$2"
+first_ip="$3"
+last_ip="$4"
+
+for i in $(seq ${first_ip} ${last_ip}); do
+  ip_address="${base_ip%.*}.${i}"
+  index=$(( ${i} - ${first_ip} ))
+  ip address delete ${ip_address}/24 dev ${dev}
+  if [ $? -eq 0 ]; then
+    echo "Deleted ${ip_address}"
+  else
+    echo "Error deleting ${ip_address}. Exiting."
+  fi
+done
