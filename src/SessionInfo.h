@@ -25,6 +25,19 @@ namespace eipScanner {
 
 		/**
 		 * @brief Establishes an EIP session with an EIP adapter
+		 * This constructor should be used when a socket needs to be bound to a 
+		 * specific IP address to allow multiple device clients on the local client.
+		 * @param host The IP address of the adapter
+		 * @param port The port of the adapter
+		 * @param timeout timout to connect and receive the response
+		 * @param client The IP address of the local client
+		 * @throw std::runtime_error
+		 * @throw std::system_error
+		 */
+		SessionInfo(const std::string &host, int port, const std::chrono::milliseconds& timeout, const std::string &client);
+
+		/**
+		 * @brief Establishes an EIP session with an EIP adapter
 		 * @param host The IP address of the adapter
 		 * @param port The port of the adapter
 		 * @param timeout timout to connect and receive the response
@@ -66,10 +79,16 @@ namespace eipScanner {
 		 */
 		sockets::EndPoint getRemoteEndPoint() const override;
 
+		/**
+		 * @sa SessionInfo::getClient
+		 * @return
+		 */
+		std::string getClient() const override;
+
 	private:
 		sockets::TCPSocket _socket;
 		cip::CipUdint _sessionHandle;
-
+		std::string _client;
 	};
 }
 

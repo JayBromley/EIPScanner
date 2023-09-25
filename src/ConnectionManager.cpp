@@ -151,7 +151,7 @@ namespace eipScanner {
 			Logger(LogLevel::INFO) << "Open UDP socket to send data to "
 					<< ioConnection->_socket->getRemoteEndPoint().toString();
 
-			findOrCreateSocket(sockets::EndPoint(si->getRemoteEndPoint().getHost(), EIP_DEFAULT_IMPLICIT_PORT));
+			findOrCreateSocket(sockets::EndPoint(si->getRemoteEndPoint().getHost(), EIP_DEFAULT_IMPLICIT_PORT), si->getClient());
 
 			auto result = _connectionMap
 					.insert(std::make_pair(response.getT2ONetworkConnectionId(), ioConnection));
@@ -226,7 +226,7 @@ namespace eipScanner {
 		}
 	}
 
-	UDPBoundSocket::SPtr ConnectionManager::findOrCreateSocket(const sockets::EndPoint& endPoint) {
+	UDPBoundSocket::SPtr ConnectionManager::findOrCreateSocket(const sockets::EndPoint& endPoint, const std::string &client) {
 		auto socket = _socketMap.find(endPoint);
 		if (socket == _socketMap.end()) {
 			auto newSocket = std::make_shared<UDPBoundSocket>(endPoint);
